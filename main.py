@@ -21,7 +21,7 @@ app.add_middleware(
 
 @app.get('/')
 def hello():
-    return {"message": "Hello World!"}
+    return {"message": "Hello from Azure Container App!"}
 
 @app.get("/processes/", response_model=List[Process])
 async def get_processes():
