@@ -6,3 +6,4 @@ load_dotenv()
 
 # OPENAI
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+OPENAI_ORG_ID = os.getenv('OPENAI_ORG_ID')

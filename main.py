@@ -1,3 +1,4 @@
+from env import OPENAI_ORG_ID, OPENAI_API_KEY
 from models import Process, ChatRequest, ChatResponse
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -5,11 +6,6 @@ from pydantic import BaseModel
 import openai
 from openai import OpenAI
 from typing import List
-from dotenv import load_dotenv
-import os
-
-# Load environment variables from .env file
-load_dotenv()
 
 from database import (
     retrieve_data
@@ -27,12 +23,9 @@ app.add_middleware(
     allow_headers="*"
 )
 
-openai_org_id = os.getenv("OPENAI_ORG_ID")
-openai_api_key = os.getenv("OPENAI_API_KEY")
-
 client = OpenAI(
-    organization=openai_org_id,
-    api_key=openai_api_key
+    organization=OPENAI_ORG_ID,
+    api_key=OPENAI_API_KEY
 )
 
 @app.get('/')
