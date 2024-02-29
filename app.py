@@ -11,7 +11,7 @@ from database import (
     retrieve_data
 )
 
-from config import Settings
+from core.config import Settings
 from azure.cosmos import CosmosClient, exceptions, PartitionKey
 from api.api_v1.router import router
 
@@ -40,6 +40,7 @@ client = OpenAI(
 global cosmos_client
 global cosmos_database
 global users_container
+
 @app.on_event("startup")
 async def app_init():
     """
@@ -56,17 +57,17 @@ async def app_init():
 
     try:
         databases = list(cosmos_client.list_databases())
-        if settings.PROJECT_NAME not in [db['id'] for db in databases]:
-            raise exceptions.ResourceNotFoundError(f"Database '{settings.PROJECT_NAME}' not found.")
+        if settings.COSMOS_DB_NAME not in [db['id'] for db in databases]:
+            raise exceptions.ResourceNotFoundError(f"Database '{settings.COSMOS_DB_NAME}' not found.")
 
-        cosmos_database = cosmos_client.get_database_client(settings.PROJECT_NAME)
-        print(f"Accessed database '{settings.PROJECT_NAME}'.")
+        cosmos_database = cosmos_client.get_database_client(settings.COSMOS_DB_NAME)
+        print(f"Accessed database '{settings.COSMOS_DB_NAME}'.")
     except exceptions.ResourceNotFoundError:
         try:
-            cosmos_database = cosmos_client.create_database(settings.PROJECT_NAME)
-            print(f"Created database '{settings.PROJECT_NAME}'.")
+            cosmos_database = cosmos_client.create_database(settings.COSMOS_DB_NAME)
+            print(f"Created database '{settings.COSMOS_DB_NAME}'.")
         except exceptions.ResourceExistsError:
-            print(f"Database '{settings.PROJECT_NAME}' already exists.")
+            print(f"Database '{settings.COSMOS_DB_NAME}' already exists.")
         except Exception as e:
             print(f"Error creating Cosmos DB database: {str(e)}")
             return
@@ -77,16 +78,15 @@ async def app_init():
     try:
         containers = list(cosmos_database.list_containers())
 
-        container_name_to_check = 'users'
-        if container_name_to_check not in [container['id'] for container in containers]:
+        if settings.COSMOS_DB_CONTAINER not in [container['id'] for container in containers]:
             raise exceptions.ResourceNotFoundError(
-                f"Container '{container_name_to_check}' not found in database '{settings.PROJECT_NAME}'.")
+                f"Container '{settings.COSMOS_DB_CONTAINER}' not found in database '{settings.PROJECT_NAME}'.")
 
-        users_container = cosmos_database.get_container_client('users')
+        users_container = cosmos_database.get_container_client(settings.COSMOS_DB_CONTAINER)
         print("Accessed 'users' collection.")
     except exceptions.ResourceNotFoundError:
         try:
-            users_container = cosmos_database.create_container(id='users', partition_key=PartitionKey(path='/user_id', kind='Hash'))
+            users_container = cosmos_database.create_container(id='users', partition_key=PartitionKey(path='/partition_key'))
             print("Created 'users' collection.")
         except exceptions.ResourceExistsError:
             print("Collection 'users' already exists.")
@@ -96,38 +96,6 @@ async def app_init():
         print(f"Error accessing 'users' collection: {str(e)}")
 
 app.include_router(router, prefix=settings.API_V1_STR)
-
-@app.get('/')
-def hello():
-    return {"message": "Hello from Azure Container App!"}
-
-@app.post("/chat", response_model=ChatResponse)
-async def chat(request: ChatRequest):
-    try:
-        response = openai.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {"role": "system", "content": "You are a Business Man. And you help with data mining."},
-                {"role": "user", "content": request.message},
-            ],
-            temperature=0
-        )
-
-        response_message = response.choices[0].message.content
-
-        print("OpenAI Response:", response_message)  # Print the entire response for debugging
-
-        return ChatResponse(role="assistant", content=response_message)
-
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-@app.get("/processes/", response_model=List[Process])
-async def get_processes():
-    # Use the retrieve_data function to retrieve data from the mock database
-    processes = retrieve_data()
-    return processes
-
 
 
 if __name__ == "__main__":
