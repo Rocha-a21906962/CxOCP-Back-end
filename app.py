@@ -57,17 +57,17 @@ async def app_init():
 
     try:
         databases = list(cosmos_client.list_databases())
-        if settings.COSMOS_DB_NAME not in [db['id'] for db in databases]:
-            raise exceptions.ResourceNotFoundError(f"Database '{settings.COSMOS_DB_NAME}' not found.")
+        if settings.COSMOS_DB not in [db['id'] for db in databases]:
+            raise exceptions.ResourceNotFoundError(f"Database '{settings.COSMOS_DB}' not found.")
 
-        cosmos_database = cosmos_client.get_database_client(settings.COSMOS_DB_NAME)
-        print(f"Accessed database '{settings.COSMOS_DB_NAME}'.")
+        cosmos_database = cosmos_client.get_database_client(settings.COSMOS_DB)
+        print(f"Accessed database '{settings.COSMOS_DB}'.")
     except exceptions.ResourceNotFoundError:
         try:
-            cosmos_database = cosmos_client.create_database(settings.COSMOS_DB_NAME)
-            print(f"Created database '{settings.COSMOS_DB_NAME}'.")
+            cosmos_database = cosmos_client.create_database(settings.COSMOS_DB)
+            print(f"Created database '{settings.COSMOS_DB}'.")
         except exceptions.ResourceExistsError:
-            print(f"Database '{settings.COSMOS_DB_NAME}' already exists.")
+            print(f"Database '{settings.COSMOS_DB}' already exists.")
         except Exception as e:
             print(f"Error creating Cosmos DB database: {str(e)}")
             return
@@ -86,7 +86,7 @@ async def app_init():
         print("Accessed 'users' collection.")
     except exceptions.ResourceNotFoundError:
         try:
-            users_container = cosmos_database.create_container(id='users', partition_key=PartitionKey(path='/partition_key'))
+            users_container = cosmos_database.create_container(id='users', partition_key=PartitionKey(path='/id', kind='Hash'))
             print("Created 'users' collection.")
         except exceptions.ResourceExistsError:
             print("Collection 'users' already exists.")

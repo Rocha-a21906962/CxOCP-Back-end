@@ -16,7 +16,7 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
     REFRESH_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 7  # 7 days
     BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = []
-    COSMOS_DB_NAME: str = os.getenv("COSMOS_DB_NAME")
+    COSMOS_DB: str = os.getenv("COSMOS_DB")
     COSMOS_DB_URI: str = os.getenv("COSMOS_DB_URI")
     COSMOS_DB_KEY: str = os.getenv("COSMOS_DB_KEY")
     COSMOS_DB_CONTAINER: str = os.getenv("COSMOS_DB_CONTAINER")
