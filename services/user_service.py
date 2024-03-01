@@ -13,4 +13,13 @@ class UserService:
         )
 
         await User.save(container, user_instance)
-        return user_instance
+        return user_instance.to_dict()
+
+    @staticmethod
+    async def authenticate_user(username: str, password: str, container):
+        user = await User.by_username(username, container)
+        if not user:
+            return None
+        if not verify_password(plain_password=password, hashed_password=user.hashed_password):
+            return None
+        return user

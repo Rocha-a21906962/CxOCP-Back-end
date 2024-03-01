@@ -1,15 +1,15 @@
 from azure.cosmos import CosmosClient
 from fastapi import APIRouter, HTTPException
 from models2.user_model import User
-from schemas.user_schema import UserAuth
+from schemas.user_schema import UserAuth, UserOut
 from services.user_service import UserService
 import os
 
 user_router = APIRouter()
 
-@user_router.post("/create", summary="Create new user")
-async def create_user(data: UserAuth):
 
+@user_router.post("/create", summary="Create new user", response_model=UserOut)
+async def create_user(data: UserAuth):
     client = CosmosClient(os.environ.get("COSMOS_DB_URI"), os.environ.get("COSMOS_DB_KEY"))
     database = client.get_database_client(os.environ.get("COSMOS_DB"))
     container = database.get_container_client(os.environ.get("COSMOS_DB_CONTAINER"))
@@ -36,6 +36,6 @@ async def create_user(data: UserAuth):
     # }
 
     # container.create_item(data_to_add)
-    await UserService.create_user(data, container)
     print(f"'Users' collection loaded with ${data} \n")
-    return {"message": "User created successfully"}
+    return await UserService.create_user(data, container)
+    # return {"message": "User created successfully"}
