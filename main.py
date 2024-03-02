@@ -1,3 +1,5 @@
+import csv
+
 from env import OPENAI_ORG_ID, OPENAI_API_KEY
 from models import Process, ChatRequest, ChatResponse
 from fastapi import FastAPI, HTTPException
@@ -34,11 +36,22 @@ def hello():
 
 @app.post("/chat", response_model=ChatResponse)
 async def chat(request: ChatRequest):
+    def read_business_process_from_csv(csv_file_path):
+        """Read the business process from the CSV file and return it as a string."""
+        with open(csv_file_path, mode='r', encoding='utf-8') as file:
+            reader = csv.DictReader(file)
+            process_data = [row["Description"] for row in reader]
+        return "\n".join(process_data)
+
+    csv_file = "pizza_business_process.csv"
+    process_data = read_business_process_from_csv(csv_file)
+
     try:
         response = openai.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
-                {"role": "system", "content": "You are a Business Man. And you help with data mining."},
+                {"role": "system", "content": "You are a Business Executive ChatBot. And you help with data mining."},
+                {"role": "user", "content": f"Please keep in mind the following business process: \"\"\"{process_data}\"\"\"."},
                 {"role": "user", "content": request.message},
             ],
             temperature=0
