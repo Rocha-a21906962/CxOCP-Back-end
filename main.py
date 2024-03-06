@@ -37,10 +37,13 @@ def hello():
 @app.post("/chat", response_model=ChatResponse)
 async def chat(request: ChatRequest):
     def read_business_process_from_csv(csv_file_path):
-        """Read the business process from the CSV file and return it as a string."""
+        """Read the business process from the CSV file and return it as a formatted string."""
         with open(csv_file_path, mode='r', encoding='utf-8') as file:
             reader = csv.DictReader(file)
-            process_data = [row["Description"] for row in reader]
+            process_data = [
+                f"Time: {row['time'][-8:-3]}, Actor: {row['actor']}, Action: {row['action']}, Description: {row['description']}"
+                for row in reader
+            ]
         return "\n".join(process_data)
 
     csv_file = "pizza_business_process.csv"
@@ -51,7 +54,7 @@ async def chat(request: ChatRequest):
             model="gpt-3.5-turbo",
             messages=[
                 {"role": "system", "content": "You are a Business Executive ChatBot. And you help with data mining."},
-                {"role": "user", "content": f"Please keep in mind the following business process: \"\"\"{process_data}\"\"\"."},
+                {"role": "user", "content": f"Please keep in mind the following business process: \"\"\"{process_data}\"\"\". It is a business process for a pizza delivery."},
                 {"role": "user", "content": request.message},
             ],
             temperature=0
