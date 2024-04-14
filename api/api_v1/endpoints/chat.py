@@ -20,7 +20,7 @@ def read_business_process_from_csv(csv_file_path):
     return "\n".join(process_data)
 
 @chat_router.post("/", summary="Chat with the AI", response_model=ChatResponse)
-async def chat(request: ChatRequest, current_user: User = Depends(get_current_user)):
+async def chat(request: ChatRequest):
 
     csv_file = "pizza_business_process.csv"
     process_data = read_business_process_from_csv(csv_file)
