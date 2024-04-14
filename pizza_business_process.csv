@@ -1,0 +1,18 @@
+time,step,actor,action,description
+2024-03-05 10:30:00,Pedido,Cliente X,Vai à pizzaria,"Escolhe tipo, ingredientes, tamanho e quantidade. Fornece informações de entrega."
+2024-03-05 10:35:00,Recebe Pedido,Trabalhador Y,Recebe o pedido,Anota os detalhes e encaminha para o Chef Z.
+2024-03-05 10:40:00,Prepara Pizza,Chef Z,Inicia preparação da pizza,Prioriza pedidos conforme ordem de chegada. Prepara pizza de acordo com detalhes fornecidos pelo cliente X.
+2024-03-05 10:45:00,Recebe Pizza,Trabalhador Y,Embala pizza,Prepara a embalagem para entrega ou para o cliente retirar no balcão.
+2024-03-05 10:50:00,Entrega Pizza,Trabalhador Y,Trabalhador entrega pizza para cliente que aguarda no local ou retorna para buscar,A equipe notifica o cliente quando a pizza está pronta. O cliente pega a pizza no balcão.
+2024-03-05 10:55:00,Reclamação,Cliente X,Cliente reclama,Registro da reclamação e ação para resolução.
+2024-03-05 10:31:00,Pedido,Cliente X,Vai à pizzaria,"Escolhe tipo, ingredientes, tamanho e quantidade. Fornece informações de entrega."
+2024-03-05 10:36:00,Recebe Pedido,Trabalhador Y,Recebe o pedido,Anota os detalhes e encaminha para o Chef Z.
+2024-03-05 10:41:00,Prepara Pizza,Chef Z,Inicia preparação da pizza,Prioriza pedidos conforme ordem de chegada. Prepara pizza de acordo com detalhes fornecidos pelo cliente X.
+2024-03-05 10:46:00,Recebe Pizza,Trabalhador Y,Embala pizza,Prepara a embalagem para entrega ou para o cliente retirar no balcão.
+2024-03-05 10:51:00,Entrega Pizza,Trabalhador Y,Trabalhador entrega pizza para cliente que aguarda no local ou retorna para buscar,A equipe notifica o cliente quando a pizza está pronta. O cliente pega a pizza no balcão.
+2024-03-05 10:56:00,Reclamação,Cliente X,Cliente reclama,Registro da reclamação e ação para resolução.
+2024-03-05 20:00:00,Pedido,Cliente Y,Vai à pizzaria,"Escolhe tipo, ingredientes, tamanho e quantidade. Fornece informações de entrega."
+2024-03-05 20:05:00,Recebe Pedido,Trabalhador Z,Recebe o pedido,Anota os detalhes e encaminha para o Chef Z.
+2024-03-05 20:10:00,Prepara Pizza,Chef Z,Inicia preparação da pizza,Prioriza pedidos conforme ordem de chegada. Prepara pizza de acordo com detalhes fornecidos pelo cliente Y.
+2024-03-05 20:15:00,Recebe Pizza,Trabalhador Z,Embala pizza,Prepara a embalagem para entrega ou para o cliente retirar no balcão.
+2024-03-05 20:20:00,Entrega Pizza,Trabalhador Z,Trabalhador entrega pizza para cliente que aguarda no local ou retorna para buscar,A equipe notifica o cliente quando a pizza está pronta. O cliente pega a pizza no balcão.

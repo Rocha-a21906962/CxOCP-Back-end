@@ -99,7 +99,6 @@ async def app_init():
             print("Collection 'processes' already exists.")
         except Exception as e:
             print(f"Error creating 'processes' collection: {str(e)}")
-        
 
 app.include_router(router, prefix=settings.API_V1_STR)
 

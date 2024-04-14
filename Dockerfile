@@ -2,6 +2,8 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
+COPY pizza_bussiness_process.csv /app/
+
 COPY requirements.txt /app/
 
 RUN pip install -r requirements.txt
