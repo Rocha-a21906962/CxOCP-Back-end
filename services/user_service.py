@@ -1,7 +1,7 @@
 from uuid import UUID
 
 from schemas.user_schema import UserAuth
-from models2.user_model import User
+from models.user_model import User
 from core.security import get_password_hash, verify_password
 
 class UserService:
@@ -20,7 +20,7 @@ class UserService:
     @staticmethod
     async def authenticate_user(username: str, password: str, container):
 
-        user = await User.by_username(username, container)
+        user = await User.by_attribute("username", username, container)
 
         if not user:
             return None
@@ -30,6 +30,16 @@ class UserService:
         return user
 
     @staticmethod
-    async def get_user_by_id(user_id: UUID):
-        user = await User.get(user_id)
-        return user.to_dict()
+    async def get_user_by_email(email: str, container):
+        user = await User.by_attribute("email", email, container)
+        return user
+
+    @staticmethod
+    async def get_user_by_username(username: str, container):
+        user = await User.by_attribute("username", username, container)
+        return user
+
+    @staticmethod
+    async def get_user_by_id(id: UUID, container):
+        user = await User.by_attribute("id", id, container)
+        return user

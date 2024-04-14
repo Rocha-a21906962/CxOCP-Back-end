@@ -6,7 +6,6 @@ from typing import Union, Any
 from core.config import Settings
 
 settings = Settings()
-# pip install python-jose[cryptography] "passlib[bcrypt]"
 
 password_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 def create_access_token(subject: Union[str, Any], expires_delta: int = None) -> str:

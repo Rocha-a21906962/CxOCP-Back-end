@@ -2,7 +2,7 @@ import os
 
 from azure.cosmos import CosmosClient
 from fastapi import APIRouter, Depends, HTTPException, status, Body
-from fastapi.security import OAuth2PasswordRequestForm #pip install python-multipart
+from fastapi.security import OAuth2PasswordRequestForm
 from typing import Any
 
 from jose import jwt
@@ -11,7 +11,7 @@ from pydantic import ValidationError
 from api.dependencies.user_dependencies import get_current_user
 from core.config import Settings
 from core.security import create_access_token, create_refresh_token
-from models2.user_model import User
+from models.user_model import User
 from schemas.auth_schema import TokenSchema, TokenPayload
 from schemas.user_schema import UserOut
 from services.user_service import UserService
@@ -54,7 +54,7 @@ async def refresh_token(refresh_token: str = Body(...)):
             headers={"WWW-Authenticate": "Bearer"}
         )
 
-    user = await UserService.get_user_by_id(token_data.sub)
+    user = await UserService.get_user_by_id(token_data.sub, container=container)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

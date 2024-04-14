@@ -1,18 +1,11 @@
-from env import OPENAI_ORG_ID, OPENAI_API_KEY
-from models import Process, ChatRequest, ChatResponse
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
 import openai
 from openai import OpenAI
 from typing import List
 
-from database import (
-    retrieve_data
-)
-
 from core.config import Settings
-from azure.cosmos import CosmosClient, exceptions, PartitionKey
+from azure.cosmos import CosmosClient, exceptions, PartitionKey # pip install azure-cosmos
 from api.api_v1.router import router
 
 settings = Settings()
@@ -33,13 +26,14 @@ app.add_middleware(
 )
 
 client = OpenAI(
-    organization=OPENAI_ORG_ID,
-    api_key=OPENAI_API_KEY
+    organization=settings.OPENAI_ORG_ID,
+    api_key=settings.OPENAI_API_KEY
 )
 
 global cosmos_client
 global cosmos_database
 global users_container
+global processes_container
 
 @app.on_event("startup")
 async def app_init():
@@ -49,7 +43,6 @@ async def app_init():
 
     try:
         cosmos_client = CosmosClient(url=settings.COSMOS_DB_URI, credential=settings.COSMOS_DB_KEY)
-        print("Initialized Cosmos DB client.")
     except exceptions.CosmosResourceNotFoundError:
         print("Cosmos DB resource not found. Check your URI and key.")
     except Exception as e:
@@ -61,11 +54,9 @@ async def app_init():
             raise exceptions.ResourceNotFoundError(f"Database '{settings.COSMOS_DB}' not found.")
 
         cosmos_database = cosmos_client.get_database_client(settings.COSMOS_DB)
-        print(f"Accessed database '{settings.COSMOS_DB}'.")
     except exceptions.ResourceNotFoundError:
         try:
             cosmos_database = cosmos_client.create_database(settings.COSMOS_DB)
-            print(f"Created database '{settings.COSMOS_DB}'.")
         except exceptions.ResourceExistsError:
             print(f"Database '{settings.COSMOS_DB}' already exists.")
         except Exception as e:
@@ -83,11 +74,9 @@ async def app_init():
                 f"Container '{settings.COSMOS_DB_CONTAINER}' not found in database '{settings.PROJECT_NAME}'.")
 
         users_container = cosmos_database.get_container_client(settings.COSMOS_DB_CONTAINER)
-        print("Accessed 'users' collection.")
     except exceptions.ResourceNotFoundError:
         try:
             users_container = cosmos_database.create_container(id='users', partition_key=PartitionKey(path='/id', kind='Hash'))
-            print("Created 'users' collection.")
         except exceptions.ResourceExistsError:
             print("Collection 'users' already exists.")
         except Exception as e:
@@ -95,8 +84,28 @@ async def app_init():
     except Exception as e:
         print(f"Error accessing 'users' collection: {str(e)}")
 
+    try:
+        containers = list(cosmos_database.list_containers())
+
+        if settings.COSMOS_DB_CONTAINER2 not in [container['id'] for container in containers]:
+            raise exceptions.ResourceNotFoundError(
+                f"Container '{settings.COSMOS_DB_CONTAINER2}' not found in database '{settings.PROJECT_NAME}'.")
+
+        processes_container = cosmos_database.get_container_client(settings.COSMOS_DB_CONTAINER2)
+    except exceptions.ResourceNotFoundError:
+        try:
+            processes_container = cosmos_database.create_container(id='processes', partition_key=PartitionKey(path='/id', kind='Hash'))
+        except exceptions.ResourceExistsError:
+            print("Collection 'processes' already exists.")
+        except Exception as e:
+            print(f"Error creating 'processes' collection: {str(e)}")
+        
+
 app.include_router(router, prefix=settings.API_V1_STR)
 
+@app.get('/')
+def hello():
+    return {"message": "Hello from Azure Container App!"}
 
 if __name__ == "__main__":
     import uvicorn

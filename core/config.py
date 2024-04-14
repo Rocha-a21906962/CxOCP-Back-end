@@ -1,6 +1,6 @@
 from typing import List
 from pydantic import AnyHttpUrl
-from pydantic_settings import BaseSettings # pip install pydantic-settings
+from pydantic_settings import BaseSettings
 from dotenv import load_dotenv
 import os
 
@@ -10,6 +10,8 @@ class Settings(BaseSettings):
 
     PROJECT_NAME: str = "CxOCP"
     API_V1_STR: str = "/api/v1"
+    OPENAI_ORG_ID: str = os.getenv('OPENAI_ORG_ID')
+    OPENAI_API_KEY: str = os.getenv('OPENAI_API_KEY')
     JWT_SECRET_KEY: str = os.getenv("JWT_SECRET_KEY")
     JWT_REFRESH_SECRET_KEY: str = os.getenv("JWT_REFRESH_SECRET_KEY")
     ALGORITHM: str = "HS256"
@@ -20,6 +22,7 @@ class Settings(BaseSettings):
     COSMOS_DB_URI: str = os.getenv("COSMOS_DB_URI")
     COSMOS_DB_KEY: str = os.getenv("COSMOS_DB_KEY")
     COSMOS_DB_CONTAINER: str = os.getenv("COSMOS_DB_CONTAINER")
+    COSMOS_DB_CONTAINER2: str = os.getenv("COSMOS_DB_CONTAINER2")
 
     class Config:
         case_sensitive = True

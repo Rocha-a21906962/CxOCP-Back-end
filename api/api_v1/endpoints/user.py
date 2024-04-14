@@ -1,6 +1,6 @@
 from azure.cosmos import CosmosClient
 from fastapi import APIRouter, HTTPException
-from models2.user_model import User
+from models.user_model import User
 from schemas.user_schema import UserAuth, UserOut
 from services.user_service import UserService
 import os
@@ -15,12 +15,12 @@ async def create_user(data: UserAuth):
     container = database.get_container_client(os.environ.get("COSMOS_DB_CONTAINER"))
 
     # Check if the user with the given email already exists
-    existing_user_email = await User.by_email(data.email, container)
+    existing_user_email = await UserService.get_user_by_email(data.email, container)
     if existing_user_email:
         raise HTTPException(status_code=400, detail="User with this email already exists")
 
     # Check if the user with the given username already exists
-    existing_user_username = await User.by_username(data.username, container)
+    existing_user_username = await UserService.get_user_by_username(data.username, container)
     if existing_user_username:
         raise HTTPException(status_code=400, detail="User with this username already exists")
 
