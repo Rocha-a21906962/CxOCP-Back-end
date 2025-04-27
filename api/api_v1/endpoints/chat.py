@@ -1,5 +1,8 @@
 import csv
 from fastapi import APIRouter, Depends, HTTPException
+from io import StringIO
+from azure.storage.blob import BlobServiceClient
+from azure.core.exceptions import AzureError, ResourceNotFoundError
 import openai
 from openai import OpenAI
 from api.dependencies.user_dependencies import get_current_user
@@ -11,22 +14,47 @@ chat_router = APIRouter()
 
 settings = Settings()
 
-def read_business_process_from_csv(csv_file_path):
-    """Read the business process from the CSV file and return it as a formatted string."""
-    with open(csv_file_path, mode='r', encoding='utf-8') as file:
-        reader = csv.DictReader(file)
-        process_data = [
-            f"Time: {row['time'][-8:-3]}, Actor: {row['actor']}, Action: {row['action']}, Description: {row['description']}"
-            for row in reader
-        ]
+def read_business_process_from_csv(csv_content):
+    """Read the business process from the CSV content and return it as a formatted string."""
+    reader = csv.DictReader(csv_content)
+    process_data = [
+        f"Time: {row['time'][-8:-3]}, Actor: {row['actor']}, Action: {row['action']}, Description: {row['description']}"
+        for row in reader
+    ]
     return "\n".join(process_data)
+
+
 
 @chat_router.post("/", summary="Chat with the AI", response_model=ChatResponse)
 async def chat(request: ChatRequest, current_user: User = Depends(get_current_user)):
 
-    csv_file = "pizza_business_process.csv"
-    process_data = read_business_process_from_csv(csv_file)
+    csv_file = "process.csv"
+    process_data = ""
 
+    try:
+        blob_service_client = BlobServiceClient.from_connection_string(settings.AZURE_STORAGE_CONNECTION_STRING)
+        container_client = blob_service_client.get_container_client(settings.AZURE_STORAGE_CONTAINER_NAME)
+
+        blob_client = container_client.get_blob_client(csv_file)
+
+
+        try:
+            blob_data = blob_client.download_blob().readall()
+            csv_content = StringIO(blob_data.decode('utf-8'))
+            process_data = read_business_process_from_csv(csv_content)
+        
+        except ResourceNotFoundError:
+            print("There is no CSV to read from!")  # Print the entire process data for debugging
+            process_data = "N/A"
+            pass
+        
+        print("Business Process Data:", process_data)  # Print the entire process data for debugging
+
+    except AzureError as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching process.csv from Azure: {e.message}")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"An error occurred while processing the CSV: {str(e)}")
+    
     try:
         # Initialize OpenAI API client
         client = OpenAI(
@@ -61,7 +89,7 @@ async def chat(request: ChatRequest, current_user: User = Depends(get_current_us
         response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
-                {"role": "user", "content": f"Please keep in mind the following business process: \"\"\"{process_data}\"\"\". It is a business process for a pizza delivery."},
+                {"role": "user", "content": f"Please keep in mind the following business process: \"\"\"{process_data}\"\"\". It is a business process."},
                 {"role": "user", "content": request.message},
             ],
             temperature=0
