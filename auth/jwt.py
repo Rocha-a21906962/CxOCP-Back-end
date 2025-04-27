@@ -25,8 +25,8 @@ database = client.get_database_client(settings.COSMOS_DB)
 container = database.get_container_client(settings.COSMOS_DB_CONTAINER)
 
 @auth_router.post('/login', summary="Login to get an access token", response_description="Access token and refresh token", response_model=TokenSchema)
-async def login(form_data: OAuth2PasswordRequestForm = Depends())-> Any:
-    user = await UserService.authenticate_user(form_data.username, form_data.password, container=container)
+async def login(username: str = Body(...), password: str = Body(...)) -> Any:
+    user = await UserService.authenticate_user(username, password, container=container)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

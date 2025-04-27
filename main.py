@@ -1,9 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-import openai
-from openai import OpenAI
 from typing import List
-
 from core.config import Settings
 from azure.cosmos import CosmosClient, exceptions, PartitionKey # pip install azure-cosmos
 from api.api_v1.router import router
@@ -25,11 +22,6 @@ app.add_middleware(
     allow_headers="*"
 )
 
-client = OpenAI(
-    organization=settings.OPENAI_ORG_ID,
-    api_key=settings.OPENAI_API_KEY
-)
-
 global cosmos_client
 global cosmos_database
 global users_container
@@ -42,6 +34,9 @@ async def app_init():
     """
 
     try:
+        print("URI:", settings.COSMOS_DB_URI)
+        print("Key:", settings.COSMOS_DB_KEY)
+        print("Key exists:", settings.COSMOS_DB_KEY is not None)
         cosmos_client = CosmosClient(url=settings.COSMOS_DB_URI, credential=settings.COSMOS_DB_KEY)
     except exceptions.CosmosResourceNotFoundError:
         print("Cosmos DB resource not found. Check your URI and key.")

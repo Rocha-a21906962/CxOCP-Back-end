@@ -23,6 +23,7 @@ class Settings(BaseSettings):
     COSMOS_DB_KEY: str = os.getenv("COSMOS_DB_KEY")
     COSMOS_DB_CONTAINER: str = os.getenv("COSMOS_DB_CONTAINER")
     COSMOS_DB_CONTAINER2: str = os.getenv("COSMOS_DB_CONTAINER2")
-
+    AZURE_STORAGE_CONNECTION_STRING: str = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
+    AZURE_STORAGE_CONTAINER_NAME: str = os.getenv("AZURE_STORAGE_CONTAINER_NAME")
     class Config:
         case_sensitive = True
