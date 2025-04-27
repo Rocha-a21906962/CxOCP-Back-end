@@ -89,7 +89,7 @@ async def chat(request: ChatRequest, current_user: User = Depends(get_current_us
         response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
-                {"role": "user", "content": f"Please keep in mind the following business process: \"\"\"{process_data}\"\"\". It is a business process."},
+                {"role": "user", "content": f"Please keep in mind the following business process: \"\"\"{process_data}\"\"\". It is a business process. If what you know is N/A, do not mention the process. Pretend you don't know anything about it."}, 
                 {"role": "user", "content": request.message},
             ],
             temperature=0
