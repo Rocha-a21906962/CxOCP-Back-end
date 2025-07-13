@@ -16,12 +16,12 @@ docker build -t backend-image .
 followed by
 
 ```bash
-docker run -d -p 5000:5000 --name backend backend-image
+docker run -d -p 6000:6000 --name backend backend-image
 ```
 
-The API will be available at [http://localhost:5000](http://localhost:5000)
+The API will be available at [http://localhost:6000](http://localhost:6000)
 
-You can view the interactive API documentation at [http://localhost:5000/docs](http://localhost:5000/docs)
+You can view the interactive API documentation at [http://localhost:6000/docs](http://localhost:6000/docs)
 
 ## Getting Started (Locally)
 

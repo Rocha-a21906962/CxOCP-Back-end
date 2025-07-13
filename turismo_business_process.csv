@@ -1,0 +1,9 @@
+Time,Step,Actor,Action,Description
+"2024-05-01 09:00:00",Booking,Cliente,Realiza Reserva,Cliente realiza a reserva para o pacote de turismo.
+"2024-05-01 09:30:00",Confirmação,Agência de Turismo,Confirma Reserva,Agência confirma a reserva e envia o e-mail de confirmação.
+"2024-05-02 10:00:00",Pagamento,Cliente,Efetua Pagamento,Cliente paga o valor do pacote via cartão de crédito.
+"2024-05-02 12:00:00",Envio de Documentos,Agência de Turismo,Envia Documentos de Viagem,Agência envia o voucher de viagem e informações detalhadas para o cliente.
+"2024-05-05 08:00:00",Preparação para Viagem,Fornecedor de Transporte,Organiza Transporte,Fornecedor organiza o transporte do aeroporto ao destino turístico.
+"2024-05-06 14:00:00",Realização da Tour,Guia Turístico,Conduz Tour,Guia turístico conduz o cliente na tour programada.
+"2024-05-06 17:00:00",Feedback,Cliente,Fornece Feedback,Cliente fornece feedback sobre a experiência do tour.
+"2024-05-06 17:30:00",Finalização,Agência de Turismo,Finaliza Tour e Envia Agradecimento,Agência envia mensagem de agradecimento e solicita um feedback detalhado.
